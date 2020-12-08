@@ -1,31 +1,13 @@
-# from PIL import Image
-# from PIL import ImageFont
-# from PIL import ImageDraw 
-# import os
-
-# fonts_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'fonts')
-# x=500
-# y=500
-# r=100
-# g=100
-# b=100
-
-# img = Image.open("tadbeer-cv-template-1.jpg")
-# draw = ImageDraw.Draw(img)
-# # font = ImageFont.truetype(os.path.join(fonts_path, 'fonts/SansSerif.ttf'), 24)
-# font = ImageFont.truetype('fonts/SansSerif.ttf', 24)
-# # draw.text((x, y),"Sample Text")
-
-# draw.text((0, 0),"Sample Text adsfasdf asdfasd fsadf asdf asdf asfd asdf asdfa sdf",(255,255,255),font=font)
-# img.save('sample-out.jpg')
-
 from PIL import Image, ImageDraw, ImageFont
 
-img = Image.open('tadbeer-cv-template-1.jpg')
+img = Image.open('tadbeer-cv-template/tadbeer-cv-template-1.jpg')
 d1 = ImageDraw.Draw(img)
-font = ImageFont.truetype('FreeMono.ttf', 44)
+font = ImageFont.truetype('fonts/FreeMono.ttf', 20)
 
-
-d1.text((28, 36), "Hello, TutorialsPoint!", fill=(255, 0, 0), font=font)
+width, height = img.size
+print(f'width: {width}, height: {height}')
+for x in range(0,width, 80):
+    for y in range(0, height, 20):
+        d1.text((x, y), f'{int(x/10)},{int(y/10)}', fill=(255, 0, 0), font=font)
 img.show()
-img.save("image_text.jpg")
+img.save("out/grid.jpg")
