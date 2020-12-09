@@ -13,8 +13,6 @@ def mk_grid():
     img.show()
     img.save("out/grid.jpg")
 
-x=1150
-y=560
 txt_loc = {
     'name':(1150, 558),
     'passport_no':(1150, 620),
