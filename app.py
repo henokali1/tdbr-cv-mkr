@@ -27,9 +27,17 @@ txt_loc = {
     'country':(905, 1320),
     'period':(1260, 1320),
     'no_of_kids':(1145, 1690),
+    'eng_poor':(320, 1490),
+    'eng_fair':(320, 1550),
+    'eng_fluent':(320, 1620),
+    'ar_poor':(580, 1490),
+    'ar_fair':(580, 1550),
+    'ar_fluent':(580, 1620),
 }
 
 img = Image.open('tadbeer-cv-template/tadbeer-cv-template-1.jpg')
+check_mark_symbol = Image.open("imgs/check-mark-symbol.JPG")
+
 d1 = ImageDraw.Draw(img)
 font = ImageFont.truetype('fonts/FreeMonoBold.ttf', 28)
 
@@ -61,5 +69,13 @@ d1.text(txt_loc['country'], country, fill=(255, 0, 0), font=font)
 d1.text(txt_loc['period'], period, fill=(255, 0, 0), font=font)
 d1.text(txt_loc['no_of_kids'], no_of_kids, fill=(255, 0, 0), font=font)
 
+img.paste(check_mark_symbol, txt_loc['eng_poor'])
+img.paste(check_mark_symbol, txt_loc['eng_fair'])
+img.paste(check_mark_symbol, txt_loc['eng_fluent'])
+img.paste(check_mark_symbol, txt_loc['ar_poor'])
+img.paste(check_mark_symbol, txt_loc['ar_fair'])
+img.paste(check_mark_symbol, txt_loc['ar_fluent'])
+
 img.show()
-img.save("out/1.jpg")
+# img.save("out/1.jpg")
+
