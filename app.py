@@ -1,81 +1,112 @@
-from PIL import Image, ImageDraw, ImageFont
+from tkinter import *
+import pyautogui
 
-def mk_grid():
-    img = Image.open('tadbeer-cv-template/tadbeer-cv-template-1.jpg')
-    d1 = ImageDraw.Draw(img)
-    font = ImageFont.truetype('fonts/FreeMono.ttf', 20)
+import datetime
 
-    width, height = img.size
-    print(f'width: {width}, height: {height}')
-    for x in range(0,width, 80):
-        for y in range(0, height, 20):
-            d1.text((x, y), f'{int(x/10)},{int(y/10)}', fill=(255, 0, 0), font=font)
-    img.show()
-    img.save("out/grid.jpg")
+class Application():
+    def __init__(self, master):
+        self.master = master
+        self.rect = None
+        self.x = self.y = 0
+        self.start_x = None
+        self.start_y = None
+        self.curX = None
+        self.curY = None
 
-txt_loc = {
-    'name':(1150, 558),
-    'passport_no':(1150, 620),
-    'place_of_issue':(1150, 690),
-    'nationality':(1150, 750),
-    'religion':(1150, 820),
-    'date_of_birth':(1150, 880),
-    'place_of_birth':(1150, 940),
-    'marital_status':(1150, 1010),
-    'height':(1150, 1070),
-    'weight':(1150, 1135),
-    'country':(905, 1320),
-    'period':(1260, 1320),
-    'no_of_kids':(1145, 1690),
-    'eng_poor':(320, 1490),
-    'eng_fair':(320, 1550),
-    'eng_fluent':(320, 1620),
-    'ar_poor':(580, 1490),
-    'ar_fair':(580, 1550),
-    'ar_fluent':(580, 1620),
-}
+        # root.configure(background = 'red')
+        # root.attributes("-transparentcolor","red")
 
-img = Image.open('tadbeer-cv-template/tadbeer-cv-template-1.jpg')
-check_mark_symbol = Image.open("imgs/check-mark-symbol.JPG")
+        root.attributes("-transparent", "blue")
+        root.geometry('400x50+200+200')  # set new geometry
+        root.title('Lil Snippy')
+        self.menu_frame = Frame(master, bg="blue")
+        self.menu_frame.pack(fill=BOTH, expand=YES)
 
-d1 = ImageDraw.Draw(img)
-font = ImageFont.truetype('fonts/FreeMonoBold.ttf', 28)
+        self.buttonBar = Frame(self.menu_frame,bg="")
+        self.buttonBar.pack(fill=BOTH,expand=YES)
 
-full_name='HENOK ALI UMER'
-passport_no = 'EP3958734'
-place_of_issue = 'PLACE OF ISSUE'
-nationality = 'ETHIOPIAN'
-religion = 'RELIGION'
-date_of_birth = '30-12-1993'
-place_of_birth = 'PLACE OF BIRTH'
-marital_status = 'MARITAL STATUS'
-height = '174cm'
-weight = '73Kg'
-country = 'U.A.E'
-period = '5 YEARS'
-no_of_kids = '3'
+        self.snipButton = Button(self.buttonBar, width=3, command=self.createScreenCanvas, background="green")
+        self.snipButton.pack(expand=YES)
 
-d1.text(txt_loc['name'], full_name, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['passport_no'], passport_no, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['place_of_issue'], place_of_issue, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['nationality'], nationality, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['religion'], religion, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['date_of_birth'], date_of_birth, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['place_of_birth'], place_of_birth, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['marital_status'], marital_status, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['height'], height, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['weight'], weight, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['country'], country, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['period'], period, fill=(255, 0, 0), font=font)
-d1.text(txt_loc['no_of_kids'], no_of_kids, fill=(255, 0, 0), font=font)
+        self.master_screen = Toplevel(root)
+        self.master_screen.withdraw()
+        self.master_screen.attributes("-transparent", "blue")
+        self.picture_frame = Frame(self.master_screen, background = "blue")
+        self.picture_frame.pack(fill=BOTH, expand=YES)
 
-img.paste(check_mark_symbol, txt_loc['eng_poor'])
-img.paste(check_mark_symbol, txt_loc['eng_fair'])
-img.paste(check_mark_symbol, txt_loc['eng_fluent'])
-img.paste(check_mark_symbol, txt_loc['ar_poor'])
-img.paste(check_mark_symbol, txt_loc['ar_fair'])
-img.paste(check_mark_symbol, txt_loc['ar_fluent'])
+    def takeBoundedScreenShot(self, x1, y1, x2, y2):
+        im = pyautogui.screenshot(region=(x1, y1, x2, y2))
+        x = datetime.datetime.now()
+        fileName = x.strftime("%f")
+        im.save("snips/" + fileName + ".png")
 
-img.show()
-# img.save("out/1.jpg")
+    def createScreenCanvas(self):
+        self.master_screen.deiconify()
+        root.withdraw()
 
+        self.screenCanvas = Canvas(self.picture_frame, cursor="cross", bg="grey11")
+        self.screenCanvas.pack(fill=BOTH, expand=YES)
+
+        self.screenCanvas.bind("<ButtonPress-1>", self.on_button_press)
+        self.screenCanvas.bind("<B1-Motion>", self.on_move_press)
+        self.screenCanvas.bind("<ButtonRelease-1>", self.on_button_release)
+
+        self.master_screen.attributes('-fullscreen', True)
+        self.master_screen.attributes('-alpha', .3)
+        self.master_screen.lift()
+        self.master_screen.attributes("-topmost", True)
+
+    def on_button_release(self, event):
+        self.recPosition()
+
+        if self.start_x <= self.curX and self.start_y <= self.curY:
+            print("right down")
+            self.takeBoundedScreenShot(self.start_x, self.start_y, self.curX - self.start_x, self.curY - self.start_y)
+
+        elif self.start_x >= self.curX and self.start_y <= self.curY:
+            print("left down")
+            self.takeBoundedScreenShot(self.curX, self.start_y, self.start_x - self.curX, self.curY - self.start_y)
+
+        elif self.start_x <= self.curX and self.start_y >= self.curY:
+            print("right up")
+            self.takeBoundedScreenShot(self.start_x, self.curY, self.curX - self.start_x, self.start_y - self.curY)
+
+        elif self.start_x >= self.curX and self.start_y >= self.curY:
+            print("left up")
+            self.takeBoundedScreenShot(self.curX, self.curY, self.start_x - self.curX, self.start_y - self.curY)
+
+        self.exitScreenshotMode()
+        return event
+
+    def exitScreenshotMode(self):
+        print("Screenshot mode exited")
+        self.screenCanvas.destroy()
+        self.master_screen.withdraw()
+        root.deiconify()
+
+    def exit_application(self):
+        print("Application exit")
+        root.quit()
+
+    def on_button_press(self, event):
+        # save mouse drag start position
+        self.start_x = self.screenCanvas.canvasx(event.x)
+        self.start_y = self.screenCanvas.canvasy(event.y)
+
+        self.rect = self.screenCanvas.create_rectangle(self.x, self.y, 1, 1, outline='red', width=3, fill="blue")
+
+    def on_move_press(self, event):
+        self.curX, self.curY = (event.x, event.y)
+        # expand rectangle as you drag the mouse
+        self.screenCanvas.coords(self.rect, self.start_x, self.start_y, self.curX, self.curY)
+
+    def recPosition(self):
+        print(self.start_x)
+        print(self.start_y)
+        print(self.curX)
+        print(self.curY)
+
+if __name__ == '__main__':
+    root = Tk()
+    app = Application(root)
+    root.mainloop()
